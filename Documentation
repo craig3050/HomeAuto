@@ -12,5 +12,6 @@ Flag 1:
     The remote unit will see this, send the required changes, then reset the flag.
 
 Flag 2:
-    This flag is not currently used.
+    If the write is unsuccessful write to the flag here so a second try can be completed.
+    This way it won't affect the working devices if it won't send.
 

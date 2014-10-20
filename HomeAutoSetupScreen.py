@@ -1,6 +1,7 @@
 __author__ = 'Craig Cuninghame'
 
 import sqlite3
+database = "cdc_database"
 
 #####   FUNCTION TO ADD DEVICES   #####
 def add_device():
@@ -54,7 +55,7 @@ def add_device():
 def setup_database():
     try:
         #Creates or opens a file called mydb with a SQlite3 DB
-        db = sqlite3.connect("cdc_database")
+        db = sqlite3.connect(database)
         #get a cursor object
         cursor = db.cursor()
         #check if table users does not exist and create it
@@ -80,7 +81,7 @@ def setup_database():
 def write_database(device_id, location, name, type, flag_1, flag_2, battery, temperature, device1, device2, device3, device4, device5, device6):
     try:
         #Creates or opens a file called mydb with a SQlite3 DB
-        db = sqlite3.connect("cdc_database")
+        db = sqlite3.connect(database)
         #get a cursor object
         cursor = db.cursor()
         cursor.execute('''INSERT INTO overview(device_id, location, name, type, flag_1, flag_2, battery, temperature, device1, device2, device3, device4, device5, device6)
@@ -102,7 +103,7 @@ def write_database(device_id, location, name, type, flag_1, flag_2, battery, tem
 #####   FUNCTION TO DELETE DEVICE FROM THE DATABASE #####
 def del_device():
     #Creates or opens a file called cdc_database with a SQlite3 DB
-    db = sqlite3.connect("cdc_database")
+    db = sqlite3.connect(database)
     #get a cursor object
     cursor = db.cursor()
     cursor.execute('''SELECT id, device_id, location, name FROM overview''')
@@ -138,7 +139,7 @@ def del_device():
 
 def list_database():
     #Creates or opens a file called cdc_database with a SQlite3 DB
-    db = sqlite3.connect("cdc_database")
+    db = sqlite3.connect(database)
     #get a cursor object
     cursor = db.cursor()
     cursor.execute('''SELECT id, device_id, location, name FROM overview''')

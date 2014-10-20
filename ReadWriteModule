@@ -1,0 +1,135 @@
+__author__ = 'Craig Cuninghame'
+
+import sqlite3
+database = "cdc_database"
+
+def main():
+    #delay??? - How is this done???
+
+    #Check primary flags
+    primary = check_flags(1)
+    #Check secondary flags
+    secondary = check_flags(2)
+
+    #Assign full set of values to primary and secondary
+    primary2 = read_attributes(primary)
+    secondary2 = read_attributes(secondary)
+
+    #Pass the variables to the sending programme
+    #Status is used when writing log files - returns success or failure
+    status = send_to_arduino(primary2)
+
+    #Write the status to the log file within the database
+    write_to_log(status)
+
+    #clear the flag
+    clear_the_flag(primary)
+
+### Module to reset the flag to "N" of a given number. This will reset primary and secondary flags ###
+### Accepts device_id number ###
+### Returns nothing ###
+def clear_the_flag(device_id):
+    #test #
+    flag_1 = "N"
+    flag_2 = "N"
+
+
+    try:
+        #Creates or opens a file called database with a SQlite3 DB
+        db = sqlite3.connect(database)
+        #get a cursor object
+        cursor = db.cursor()
+        cursor.execute('''UPDATE overview(SET flag_1, Flag_2 WHERE device_id = device_id)
+        VALUES (?,?,?)''', (flag_1, flag_2, device_id))
+
+        #commit the change
+        db.commit()
+
+    #catch the exception
+    except Exception as e:
+        #roll back any change if something goes wrong
+        db.rollback()
+        raise e
+
+    finally:
+        #close the db connection
+        db.close()
+
+
+
+
+
+
+### Module to write the attempt into the database log
+def write_to_log(status):
+    return 0
+
+
+
+
+##Module to take data from database and send it to the arduino (unicode format)###
+### Accepts long data containing device_id, flag_1, flag_2, battery, temperature, device1, device2, device3, device4, device5, device6 ###
+### Returns ("PASS" or "FAIL" + long_data ###
+def send_to_arduino(long_data):
+    #pass attributes to pyserial
+        #open serial monitor
+        #pass values to arduino
+
+    #await success / fail
+
+    #Return PASS or FAIL for use by the logging file
+    ##temp check
+    if long_data[1] == "Y":
+        return "PASS", long_data
+    else:
+        return "FAIL", long_data
+
+
+
+
+
+### Module to read a line from the database that corresponds to the given device_id number (n) ###
+### Accepts device_id ###
+### Returns device_id, flag_1, flag_2, battery, temperature, device1, device2, device3, device4, device5, device6 ###
+def read_attributes(n):
+     #Creates or opens a file called cdc_database with a SQlite3 DB
+    db = sqlite3.connect(database)
+    #get a cursor object
+    cursor = db.cursor()
+    #select items we want from database
+    cursor.execute('''SELECT device_id, flag_1, flag_2, battery, temperature, device1, device2, device3, device4, device5, device6 FROM overview''')
+    #fetch all values from database into a variable called row_value
+    row_value = cursor.fetchall()
+    #checks each line to see if primary or secondary variable is in each row
+    #if it gets a "Y" it will return the device number
+    for row in row_value:
+        if row[0] == n:
+            return row
+
+
+### Module to check flags within the database ###
+### Accepts either 1 or 2 which corresponds to either primary or secondary flags ###
+### Returns device_id which has a "Y" in the flag ###
+def check_flags(n):
+    #n relates to a 1 or a 2  for primary or secondary flag status
+    #Creates or opens a file called cdc_database with a SQlite3 DB
+    db = sqlite3.connect(database)
+    #get a cursor object
+    cursor = db.cursor()
+    #select items we want from database
+    cursor.execute('''SELECT device_id, flag_1, flag_2 FROM overview''')
+    #fetch all values from database into a variable called row_value
+    row_value = cursor.fetchall()
+    #checks each line to see if primary or secondary variable is in each row
+    #if it gets a "Y" it will return the device number
+    for row in row_value:
+        if row[n] == "Y":
+            return row[0]
+    #if nothing is found the programme will return "N"
+    return "N"
+
+
+
+### This is required if module is called on it's own ###
+if __name__ == '__main__':
+    main()
