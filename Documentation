@@ -1,0 +1,16 @@
+Product ID number:
+    Example 10018173
+    First 3 digit - '100' relates to standard product types
+    Second 5 digits - '18173' is a random serial number to give each device a unique ID
+
+Location:
+    Locations should be formatted as example: 'L01 Roomtype'
+    Level L01 = First floor, Roomtype = 'Hallway'
+
+Flag 1:
+    This flag is uses to indicate to the process which sends commands to remote units that something has changed.
+    The remote unit will see this, send the required changes, then reset the flag.
+
+Flag 2:
+    This flag is not currently used.
+
