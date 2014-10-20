@@ -30,14 +30,20 @@ def add_device():
         type = "OTHER"
 
     #Populate other fields with default values
-    status = "Unknown"
-    reading = "Unknown"
     flag_1 = "N"
     flag_2 = "N"
+    battery = "Unknown"
+    temperature = "Unknown"
+    device1 = "N"
+    device2 = "N"
+    device3 = "N"
+    device4 = "N"
+    device5 = "N"
+    device6 = "N"
 
     do_continue = raw_input("Do you wish to add device to database? (Y / N): ")
     if do_continue == "Y" or "y":
-        write_database(device_id, location, name, type, status, reading, flag_1, flag_2)
+        write_database(device_id, location, name, type, flag_1, flag_2, battery, temperature, device1, device2, device3, device4, device5, device6)
         print ("Device Added!!!")
     else:
         print ("Device NOT Added!!!")
@@ -53,9 +59,9 @@ def setup_database():
         cursor = db.cursor()
         #check if table users does not exist and create it
         cursor.execute('''CREATE TABLE IF NOT EXISTS overview(id INTEGER PRIMARY KEY, device_id INTEGER,
-        location TEXT, name TEXT, type TEXT, status TEXT, reading INTEGER, flag_1 TEXT, flag_2 TEXT )''')
+        location TEXT, name TEXT, type TEXT, flag_1 TEXT, flag_2 TEXT, battery INTEGER, temperature TEXT, device1 TEXT, device2 TEXT, device3 TEXT, device4 TEXT, device5 TEXT, device6 TEXT )''')
         cursor.execute('''CREATE TABLE IF NOT EXISTS log(log_no INTEGER PRIMARY KEY, time TEXT, device_id INTEGER,
-        location TEXT, name TEXT, type TEXT, status TEXT, reading INTEGER)''')
+        location TEXT, flag_1 TEXT, flag_2 TEXT, battery INTEGER, temperature TEXT, device1 TEXT, device2 TEXT, device3 TEXT, device4 TEXT, device5 TEXT, device6 TEXT )''')
         #commit the change
         db.commit()
 
@@ -70,19 +76,15 @@ def setup_database():
         db.close()
 
 
-
-
-
-
 #####   FUNCTION TO ADD INDIVIDUAL LINES TO THE DATABASE    #####
-def write_database(device_id, location, name, type, status, reading, flag_1, flag_2):
+def write_database(device_id, location, name, type, flag_1, flag_2, battery, temperature, device1, device2, device3, device4, device5, device6):
     try:
         #Creates or opens a file called mydb with a SQlite3 DB
         db = sqlite3.connect("cdc_database")
         #get a cursor object
         cursor = db.cursor()
-        cursor.execute('''INSERT INTO overview(device_id, location, name, type, status, reading, flag_1, flag_2)
-        VALUES (?,?,?,?,?,?,?,?)''', (device_id, location, name, type, status, reading, flag_1, flag_2))
+        cursor.execute('''INSERT INTO overview(device_id, location, name, type, flag_1, flag_2, battery, temperature, device1, device2, device3, device4, device5, device6)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', (device_id, location, name, type, flag_1, flag_2, battery, temperature, device1, device2, device3, device4, device5, device6))
         #commit the change
         db.commit()
 
