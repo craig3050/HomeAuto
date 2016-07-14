@@ -2,59 +2,83 @@
 #include <MQTTClient.h>
 #include <DHT.h>
 
-//Device Setup
+//###########################################################
+//WIFI & MQTT definitions & global variables
 const char *area = "LivingRoom";
-const char *ssid = "CraigDC";
+const char *ssid = "3Com";
 const char *pass = "32e75c752f";
+WiFiClient esp12;
+MQTTClient client;
+void connect(); // <- predefine connect() for setup()
+//###########################################################
 
-//setup variables used in the sketch
-unsigned long currentMillis = millis();
-unsigned long lastMillis = 0; //used for the delay loop
+//###########################################################
+//DHT22 setup area
 float tempReading = 0;
 float humidityReading = 0;
 #define DHTTYPE DHT22
-#define DHTPIN 7 //data wire plugged in to pin 7
+#define DHTPIN 5 //data wire plugged in to pin 5
 //initialise DHT Sensor
-DHT dht(DHTPIN, DHTTYPE, 11); // 11 works fine for ESP8266
+DHT dht(DHTPIN, DHTTYPE); 
+//###########################################################
 
-WiFiClient esp12;
-MQTTClient client;
+//###########################################################
+//MISC
+unsigned long lastMillis = 0; //used for the delay loop
+int ledPin = 4; //define ledPin as number 12
+//###########################################################
 
-void connect(); // <- predefine connect() for setup()
-void takeReadings(); // predefine takeReadings()
 
 void setup() {
   //Sensor pin setup
-//  dht.begin(); //initialise temp sensor
-
+  dht.begin(); //initialise temp sensor
+  pinMode(ledPin, OUTPUT); //define ledPin as an output
+  
   //wifi + MQTT Setup
-  Serial.begin(115200); //begin serial monitor for debugging
+  Serial.begin(57600); //begin serial monitor for debugging
   WiFi.begin(ssid, pass); //start wifi module
   client.begin("192.168.0.10", esp12); //begin connection to MQTT server
   connect(); //run connect loop
 }
 
+//###########################################################
 
 void loop() {
   client.loop();
   delay(10); // <- fixes some issues with WiFi stability
 
-  if (!client.connected()) {
+  //if client not connected, reconnect
+  if (!client.connected()) { 
     connect();
   }
-//
+
 
 //Loop to put the microcontroller to sleep
-  if (currentMillis - lastMillis >= 1000000000) {
+  unsigned long currentMillis = millis();
+  if (currentMillis - lastMillis >= 10000) {
     lastMillis = currentMillis;  
-   
+
+    //take tempReading from DHT22 sensor;
+    Serial.println("taking readings");
+    tempReading = dht.readTemperature();  //read temperature from DHT22
+    //take humidityReading from DHT22 sensor;
+    humidityReading = dht.readHumidity(); //read humidity from DHT22
+    String temp_send = String(tempReading); //convert reading from Float to String
+    client.publish("area/temperature", temp_send); //send reading to mqtt
+    String humidity_send = String(humidityReading); //convert reading from Float to String
+    client.publish("area/humidity", humidity_send); //send reading to mqtt
+    Serial.println(tempReading);
+    Serial.println(humidityReading);
     //go to sleep for 10 seconds
-    ESP.deepSleep(100000000, WAKE_RF_DEFAULT); //ESP.deepSleep([microseconds], [mode])
-  }
+//    ESP.deepSleep(100000000, WAKE_RF_DEFAULT); //ESP.deepSleep([microseconds], [mode])
+    }
 }
 
 
-//connect to wifi
+//###########################################################
+
+
+//loop to connect to wifi & MQTT Server
 void connect() {
   Serial.print("checking wifi...");
   while (WiFi.status() != WL_CONNECTED) {
@@ -73,6 +97,7 @@ void connect() {
   client.subscribe("/example"); // client.unsubscribe("/example");
 }
 
+//###########################################################
 
 void messageReceived(String topic, String payload, char * bytes, unsigned int length) {
   Serial.print("incoming: ");
@@ -81,26 +106,14 @@ void messageReceived(String topic, String payload, char * bytes, unsigned int le
   Serial.print(payload);
   Serial.println();
   
-    if(payload == "UP"){
-      digitalWrite(5, HIGH);
+    if(payload == "ON"){
+      digitalWrite(ledPin, HIGH);
+      Serial.println("PIN HIGH");
     }
   
-    if(payload == "DOWN"){
-      digitalWrite(5, LOW);
+    if(payload == "OFF"){
+      digitalWrite(ledPin, LOW);
+      Serial.println("PIN LOW");
     }
-  
 }
-
-
-//void takeReadings() {
-//    //take tempReading from DHT22 sensor;
-//    tempReading = dht.readTemperature();  
-//    //take humidityReading from DHT22 sensor;
-//    humidityReading = dht.readHumidity();
-//    Serial.print(tempReading);
-//    Serial.print(humidityReading);
-    
-//    client.publish("area/temperature", tempReading);
-//    client.publish("area/humidity", humidityReading);
-
-//}
+//###########################################################
