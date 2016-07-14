@@ -26,6 +26,8 @@ DHT dht(DHTPIN, DHTTYPE);
 //MISC
 unsigned long lastMillis = 0; //used for the delay loop
 int ledPin = 4; //define ledPin as number 12
+int analogPin = A0;
+int voltageReading = 0;
 //###########################################################
 
 
@@ -69,6 +71,12 @@ void loop() {
     client.publish("area/humidity", humidity_send); //send reading to mqtt
     Serial.println(tempReading);
     Serial.println(humidityReading);
+
+    //take voltage reading
+    voltageReading = analogRead(analogPin);
+    String voltage_send = String(voltageReading); //convert reading from Float to String
+    client.publish("area/voltage", voltage_send); //send reading to mqtt
+    
     //go to sleep for 10 seconds
 //    ESP.deepSleep(100000000, WAKE_RF_DEFAULT); //ESP.deepSleep([microseconds], [mode])
     }
