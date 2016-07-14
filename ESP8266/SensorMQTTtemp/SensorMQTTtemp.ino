@@ -44,10 +44,10 @@ void loop() {
   }
 //
 
-
-  if (currentMillis - lastMillis >= 10000000) {
+//Loop to put the microcontroller to sleep
+  if (currentMillis - lastMillis >= 1000000000) {
     lastMillis = currentMillis;  
-    
+   
     //go to sleep for 10 seconds
     ESP.deepSleep(100000000, WAKE_RF_DEFAULT); //ESP.deepSleep([microseconds], [mode])
   }
