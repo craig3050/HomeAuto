@@ -78,7 +78,7 @@ void loop() {
     client.publish("area/voltage", voltage_send); //send reading to mqtt
     
     //go to sleep for 25 seconds
-    ESP.deepSleep(25000000, WAKE_RF_DEFAULT); //ESP.deepSleep([microseconds], [mode])
+    ESP.deepSleep(2500000000, WAKE_RF_DEFAULT); //ESP.deepSleep([microseconds], [mode])
 
     }
 }
