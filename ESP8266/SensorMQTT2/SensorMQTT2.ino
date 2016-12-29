@@ -35,6 +35,7 @@ void setup() {
   //Sensor pin setup
   dht.begin(); //initialise temp sensor
   pinMode(ledPin, OUTPUT); //define ledPin as an output
+  pinMode(2, OUTPUT); //temporary define pin 2 as output
   
   //wifi + MQTT Setup
   Serial.begin(57600); //begin serial monitor for debugging
@@ -77,6 +78,21 @@ void loop() {
     voltageReading = analogRead(analogPin);
     String voltage_send = String(voltageReading); //convert reading from Float to String
     client.publish("area/voltage", voltage_send); //send reading to mqtt
+
+    //temporary test for waking up
+    Serial.println("test LED");
+    digitalWrite(2, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(1000);              // wait for a second
+    Serial.println("test LED2");
+    digitalWrite(2, LOW);    // turn the LED off by making the voltage LOW
+    delay(1000);              // wait for a second
+    Serial.println("test LED3");
+    digitalWrite(2, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(1000);              // wait for a second
+    Serial.println("test LED4"); 
+    digitalWrite(2, LOW);    // turn the LED off by making the voltage LOW
+    delay(1000);              // wait for a second
+
     
     //go to sleep for 25 seconds
     Serial.println("going to sleep");
@@ -84,15 +100,7 @@ void loop() {
     Serial.println("now I'm awake");
 
 
-    //temporary test for waking up
-    digitalWrite(4, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(1000);              // wait for a second
-    digitalWrite(4, LOW);    // turn the LED off by making the voltage LOW
-    delay(1000);              // wait for a second
-    digitalWrite(4, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(1000);              // wait for a second
-    digitalWrite(4, LOW);    // turn the LED off by making the voltage LOW
-    delay(1000);              // wait for a second
+
 
     }   
 }
@@ -122,21 +130,21 @@ void connect() {
 
 //###########################################################
 
-//void messageReceived(String topic, String payload, char * bytes, unsigned int length) {
-//  Serial.print("incoming: ");
-//  Serial.print(topic);
-//  Serial.print(" - ");
-//  Serial.print(payload);
-//  Serial.println();
-//  
-//    if(payload == "ON"){
-//      digitalWrite(ledPin, HIGH);
-//      Serial.println("PIN HIGH");
-//    }
-//  
-//    if(payload == "OFF"){
-//      digitalWrite(ledPin, LOW);
-//      Serial.println("PIN LOW");
-//    }
-//}
+void messageReceived(String topic, String payload, char * bytes, unsigned int length) {
+  Serial.print("incoming: ");
+  Serial.print(topic);
+  Serial.print(" - ");
+  Serial.print(payload);
+  Serial.println();
+  
+    if(payload == "ON"){
+      digitalWrite(ledPin, HIGH);
+      Serial.println("PIN HIGH");
+    }
+  
+    if(payload == "OFF"){
+      digitalWrite(ledPin, LOW);
+      Serial.println("PIN LOW");
+    }
+}
 //###########################################################

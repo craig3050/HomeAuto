@@ -77,22 +77,15 @@ void loop() {
     voltageReading = analogRead(analogPin);
     String voltage_send = String(voltageReading); //convert reading from Float to String
     client.publish("area/voltage", voltage_send); //send reading to mqtt
-    
-    //go to sleep for 25 seconds
-    Serial.println("going to sleep");
-    ESP.deepSleep(25000000, WAKE_RF_DEFAULT); //ESP.deepSleep([microseconds], [mode]) 25000000 = 25 seconds 2500000000 = 41 minutes
-    Serial.println("now I'm awake");
+
+   
+//    //go to sleep for 25 seconds
+//    Serial.println("going to sleep");
+//    ESP.deepSleep(25000000, WAKE_RF_DEFAULT); //ESP.deepSleep([microseconds], [mode]) 25000000 = 25 seconds 2500000000 = 41 minutes
+//    Serial.println("now I'm awake");
 
 
-    //temporary test for waking up
-    digitalWrite(4, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(1000);              // wait for a second
-    digitalWrite(4, LOW);    // turn the LED off by making the voltage LOW
-    delay(1000);              // wait for a second
-    digitalWrite(4, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(1000);              // wait for a second
-    digitalWrite(4, LOW);    // turn the LED off by making the voltage LOW
-    delay(1000);              // wait for a second
+
 
     }   
 }
@@ -122,21 +115,21 @@ void connect() {
 
 //###########################################################
 
-//void messageReceived(String topic, String payload, char * bytes, unsigned int length) {
-//  Serial.print("incoming: ");
-//  Serial.print(topic);
-//  Serial.print(" - ");
-//  Serial.print(payload);
-//  Serial.println();
-//  
-//    if(payload == "ON"){
-//      digitalWrite(ledPin, HIGH);
-//      Serial.println("PIN HIGH");
-//    }
-//  
-//    if(payload == "OFF"){
-//      digitalWrite(ledPin, LOW);
-//      Serial.println("PIN LOW");
-//    }
-//}
+void messageReceived(String topic, String payload, char * bytes, unsigned int length) {
+  Serial.print("incoming: ");
+  Serial.print(topic);
+  Serial.print(" - ");
+  Serial.print(payload);
+  Serial.println();
+  
+    if(payload == "ON"){
+      digitalWrite(ledPin, HIGH);
+      Serial.println("PIN HIGH");
+    }
+  
+    if(payload == "OFF"){
+      digitalWrite(ledPin, LOW);
+      Serial.println("PIN LOW");
+    }
+}
 //###########################################################
