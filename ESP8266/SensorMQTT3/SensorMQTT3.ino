@@ -39,7 +39,7 @@ void setup() {
   //wifi + MQTT Setup
   Serial.begin(57600); //begin serial monitor for debugging
   WiFi.begin(ssid, pass); //start wifi module
-  client.begin("192.168.0.10", esp12); //begin connection to MQTT server
+  client.begin("192.168.0.14", esp12); //begin connection to MQTT server
   connect(); //run connect loop
 }
 
@@ -75,14 +75,15 @@ void loop() {
 
     //take voltage reading
     voltageReading = analogRead(analogPin);
+    voltageReading = voltageReading - 584;
     String voltage_send = String(voltageReading); //convert reading from Float to String
     client.publish("area/voltage", voltage_send); //send reading to mqtt
 
    
-//    //go to sleep for 25 seconds
-//    Serial.println("going to sleep");
-//    ESP.deepSleep(25000000, WAKE_RF_DEFAULT); //ESP.deepSleep([microseconds], [mode]) 25000000 = 25 seconds 2500000000 = 41 minutes
-//    Serial.println("now I'm awake");
+    //go to sleep for 25 seconds
+    Serial.println("going to sleep");
+    ESP.deepSleep(1500000000, WAKE_RF_DEFAULT); //ESP.deepSleep([microseconds], [mode]) 25000000 = 25 seconds 2500000000 = 41 minutes
+    Serial.println("now I'm awake");
 
 
 
